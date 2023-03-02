@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Twitter Clone - Final</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.6.3.min.js"
+      integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+      crossorigin="anonymous"
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"></script>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- feed starts -->
+    <div class="container">
+      <div class="feed__header">
+        <h2>Home</h2>
+      </div>
+
+      <!-- tweetbox starts -->
+      <div class="tweetBox">
+        <form method="post">
+          <div class="tweetbox__input">
+            <img
+              src="https://i.pinimg.com/originals/a6/58/32/a65832155622ac173337874f02b218fb.png"
+              alt=""
+            />
+            <input type="text" placeholder="Naon Nu Dirasa?" name="postingan" />
+          </div>
+          <input type="hidden" name="nama" id="user" />
+          <button class="tweetBox__tweetButton">Tweet</button>
+        </form>
+      </div>
+      <!-- tweetbox ends -->
+      <div id="target"></div>
+    </div>
+    <!-- feed ends -->
+
+    <script>
+      function myFunction() {
+        let a = prompt("Silahkan masukan nama kamu", "");
+        null != a && localStorage.setItem("nama", a);
+      }
+      function gethasil(id) {
+        $.get("posts/" + id, function (hasil) {
+          var datase = `<div class="post" id="${hasil.nama}">
+          <div class="post__avatar">
+            <img
+              src="https://i.pinimg.com/originals/a6/58/32/a65832155622ac173337874f02b218fb.png"
+              alt=""
+            />
+          </div>
+          <div class="post__body">
+            <div class="post__header">
+              <div class="post__headerText">
+                <h3>
+                 ${hasil.nama}
+                  <span class="post__headerSpecial"
+                    ><span class="material-icons post__badge"> verified </span
+                    >@${hasil.nama}</span
+                  >
+                </h3>
+              </div>
+              <div class="post__headerDescription">
+                <p>${hasil.postingan}</p>
+              </div>
+            </div>
+          </div>
+        </div>`;
+          $("#target").prepend(datase);
+        });
+      }
+      null == localStorage.getItem("nama") && myFunction();
+      $(document).ready(function () {
+        var user = localStorage.getItem("nama");
+        $("#user").val(user);
+        $.get("posts", function (data) {
+          $.each(data, function (index, hasil) {
+            var datase = `<div class="post" id="${hasil.nama}">
+          <div class="post__avatar">
+            <img
+              src="https://i.pinimg.com/originals/a6/58/32/a65832155622ac173337874f02b218fb.png"
+              alt=""
+            />
+          </div>
+          <div class="post__body">
+            <div class="post__header">
+              <div class="post__headerText">
+                <h3>
+                 ${hasil.nama}
+                  <span class="post__headerSpecial"
+                    ><span class="material-icons post__badge"> verified </span
+                    >@${hasil.nama}</span
+                  >
+                </h3>
+              </div>
+              <div class="post__headerDescription">
+                <p>${hasil.postingan}</p>
+              </div>
+            </div>
+          </div>
+        </div>`;
+            $("#target").append(datase);
+          });
+        });
+        $("form").submit(function () {
+          var alamat = "/posts";
+          var data = $(this).serializeArray();
+          event.preventDefault();
+          $.post(alamat, data, function (hasil) {
+            gethasil(hasil.id);
+            $("form").trigger("reset");
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
